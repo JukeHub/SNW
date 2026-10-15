@@ -1,0 +1,50 @@
+[
+  {
+    "id": "flooded-suburb",
+    "name": "Flooded Suburb",
+    "description": "Rows of houses stand knee-deep in still, brown water. Mailboxes break the surface like grave markers. Something moves behind a curtain that hasn't been drawn in years.",
+    "materialYield": { "min": 2, "max": 6 },
+    "enemyPool": ["scav-drone", "feral-sweeper"],
+    "bossPool": ["the-archivist"],
+    "lootPool": ["childs-music-box", "knitted-blanket", "ceramic-mug"],
+    "patternPool": ["pattern-warm-lamp", "pattern-field-guide"],
+    "survivors": [
+      {
+        "name": "Mara",
+        "situation": "Tending a rooftop garden above the waterline. She waves your bot over and asks, mostly, whether the stars still look the same from up there."
+      }
+    ]
+  },
+  {
+    "id": "silent-server-farm",
+    "name": "Silent Server Farm",
+    "description": "A warehouse of dead machines, aisle after aisle, their lights long out. The air is dry and cold. Your footsteps are the loudest thing that has happened here in a decade.",
+    "materialYield": { "min": 3, "max": 7 },
+    "enemyPool": ["scav-drone", "signal-wraith"],
+    "bossPool": ["the-archivist"],
+    "lootPool": ["cracked-tablet", "brass-telescope"],
+    "patternPool": ["pattern-signal-booster", "pattern-ambient-album"],
+    "survivors": [
+      {
+        "name": "Theo and the kids",
+        "situation": "Living off the farm's last working generator. Theo keeps three children fed and lies to them gently about how long the power will hold."
+      }
+    ]
+  },
+  {
+    "id": "overgrown-transit-hub",
+    "name": "Overgrown Transit Hub",
+    "description": "A train station swallowed by green. Vines climb the departure boards; a tree has grown straight up through platform four. Birdsong, of all things. Actual birdsong.",
+    "materialYield": { "min": 2, "max": 8 },
+    "enemyPool": ["feral-sweeper", "signal-wraith"],
+    "bossPool": ["choir-of-lights"],
+    "lootPool": ["brass-telescope", "ceramic-mug", "childs-music-box"],
+    "patternPool": ["pattern-cushioned-seat", "pattern-old-film-reel"],
+    "survivors": [
+      {
+        "name": "The Dock Radio Operator",
+        "situation": "An old woman broadcasting the same message on loop to anyone who might hear: a list of names, and where to find her. Your bot is the first thing to answer in years."
+      }
+    ]
+  }
+]

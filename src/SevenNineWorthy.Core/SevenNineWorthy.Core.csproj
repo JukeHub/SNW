@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Unity-safe core: netstandard2.0, C# 9 max, no host IO (no System.Console). -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <RootNamespace>SevenNineWorthy.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Newtonsoft is the JSON library Unity ships (com.unity.nuget.newtonsoft-json). -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

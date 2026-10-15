@@ -1,0 +1,27 @@
+[
+  {
+    "id": "childs-music-box",
+    "name": "Child's Music Box",
+    "flavor": "Still winds. Still plays. The tune is half-familiar, like something a grandparent might have hummed."
+  },
+  {
+    "id": "cracked-tablet",
+    "name": "Cracked Tablet",
+    "flavor": "The screen is spiderwebbed but the storage is intact. Someone's whole life might be in here."
+  },
+  {
+    "id": "ceramic-mug",
+    "name": "Chipped Ceramic Mug",
+    "flavor": "WORLD'S OKAYEST BOSS. A small, stupid, human thing. You want it badly."
+  },
+  {
+    "id": "brass-telescope",
+    "name": "Brass Telescope",
+    "flavor": "Heavy, cold, and pointed at a sky no one has looked at kindly in a long time."
+  },
+  {
+    "id": "knitted-blanket",
+    "name": "Hand-Knitted Blanket",
+    "flavor": "Moth-eaten at one corner. Someone counted every stitch. You can tell."
+  }
+]

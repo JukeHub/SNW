@@ -1,0 +1,29 @@
+[
+  { "type": "book", "title": "A Psalm for the Wild-Built (Becky Chambers)", "flavor": "A tea monk and a robot walk into the wilderness to ask what people need. You read it slowly, on purpose." },
+  { "type": "book", "title": "Station Eleven (Emily St. John Mandel)", "flavor": "A travelling theatre troupe after the end of everything. It used to read like a warning. Now it reads like a letter from a friend." },
+  { "type": "book", "title": "The Left Hand of Darkness (Ursula K. Le Guin)", "flavor": "A long walk across the ice beside someone you don't understand yet. By the end, you do." },
+  { "type": "book", "title": "Middlemarch (George Eliot)", "flavor": "Eight hundred pages of ordinary lives in a small town. The ordinary lives turn out to be the whole point." },
+  { "type": "book", "title": "The Remains of the Day (Kazuo Ishiguro)", "flavor": "A butler drives through the countryside, almost saying what he means, mile after mile." },
+
+  { "type": "music", "title": "Music for Airports (Brian Eno)", "flavor": "Built to make waiting rooms bearable. It works on orbiters too." },
+  { "type": "music", "title": "Kind of Blue (Miles Davis)", "flavor": "Unhurried and cool, like the musicians had all the time in the world. Maybe they did." },
+  { "type": "music", "title": "Blue (Joni Mitchell)", "flavor": "Just a voice, a dulcimer, and nothing held back." },
+  { "type": "music", "title": "In Rainbows (Radiohead)", "flavor": "Warm and restless at once. Best heard with the lights low." },
+  { "type": "music", "title": "Pet Sounds (The Beach Boys)", "flavor": "Sunlit harmonies with something aching underneath." },
+  { "type": "music", "title": "The Disintegration Loops (William Basinski)", "flavor": "Old tape loops slowly crumbling as they play. Beautiful in a way that's hard to explain up here." },
+  { "type": "music", "title": "Carrie & Lowell (Sufjan Stevens)", "flavor": "Quiet songs about grief, sung barely above a whisper." },
+  { "type": "music", "title": "Selected Ambient Works 85-92 (Aphex Twin)", "flavor": "Machines dreaming in soft focus. Fitting company." },
+  { "type": "music", "title": "Vespertine (Bjork)", "flavor": "Music boxes, whispers and snowfall. It sounds like being indoors on a winter night." },
+  { "type": "music", "title": "Moon Safari (Air)", "flavor": "Lounge-y and starry-eyed. Someone imagined space would feel like this, and sometimes it does." },
+
+  { "type": "movie", "title": "WALL-E", "flavor": "A small robot tidies a dead Earth and falls in love. You try not to take it personally." },
+  { "type": "movie", "title": "My Neighbor Totoro", "flavor": "Two sisters, a new house, and a forest spirit at the bus stop in the rain. Nothing bad happens. That's the gift." },
+  { "type": "movie", "title": "Paddington 2", "flavor": "If we're kind and polite, the world will be right. Hard to argue with." },
+  { "type": "movie", "title": "Spirited Away", "flavor": "A girl works in a bathhouse for spirits and doesn't forget her own name." },
+  { "type": "movie", "title": "The Iron Giant", "flavor": "A giant machine decides what kind of machine it wants to be." },
+  { "type": "movie", "title": "Arrival", "flavor": "Learning a language that changes how you see time. You'd make the same choice, too." },
+  { "type": "movie", "title": "Paris, Texas", "flavor": "A man walks out of the desert and slowly finds his way back to people." },
+  { "type": "movie", "title": "Stalker", "flavor": "Three men cross a forbidden Zone toward a room that grants wishes. Long, quiet, and green." },
+  { "type": "movie", "title": "Tampopo", "flavor": "A truck driver helps a widow perfect her ramen. Mostly it's a love letter to eating." },
+  { "type": "movie", "title": "Moonstruck", "flavor": "Brooklyn, opera, a full moon, and a family too loud to be unhappy for long." }
+]
