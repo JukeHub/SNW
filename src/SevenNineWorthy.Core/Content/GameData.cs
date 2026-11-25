@@ -5,27 +5,38 @@ using System.Linq;
 namespace SevenNineWorthy.Core
 {
     /// <summary>
-    /// All content templates, loaded once at startup. The host supplies the directory,
-    /// so the core never hardcodes where data lives.
+    /// All content, loaded once at startup straight into the model classes. The host supplies
+    /// the directory, so the core never hardcodes where data lives.
     /// </summary>
     public class GameData
     {
         public IReadOnlyList<ZoneTemplate> Zones { get; }
-        public IReadOnlyDictionary<string, EnemyTemplate> Enemies { get; }
-        public IReadOnlyDictionary<string, PatternTemplate> Patterns { get; }
-        public IReadOnlyDictionary<string, LootTemplate> Loot { get; }
+
+        // Looked up by name, which is how zones.json refers to them.
+        public IReadOnlyDictionary<string, Enemy> Enemies { get; }
+        public IReadOnlyDictionary<string, Boss> Bosses { get; }
+        public IReadOnlyDictionary<string, Pattern> Patterns { get; }
+
+        /// <summary>Every upgrade the orbiter can buy.</summary>
+        public IReadOnlyList<Upgrade> Upgrades { get; }
 
         /// <summary>The media collection a brand-new orbiter starts with.</summary>
         public IReadOnlyList<MediaItem> StartingMedia { get; }
 
-        private GameData(List<ZoneTemplate> zones, List<EnemyTemplate> enemies,
-                         List<PatternTemplate> patterns, List<LootTemplate> loot, List<MediaItem> startingMedia)
+        private GameData(List<ZoneTemplate> zones, List<Enemy> enemies, List<Pattern> patterns,
+                         List<Upgrade> upgrades, List<MediaItem> startingMedia)
         {
             Zones = zones;
+            Upgrades = upgrades;
             StartingMedia = startingMedia;
-            Enemies = ById(enemies, e => e.Id, "enemies.json");
-            Patterns = ById(patterns, p => p.Id, "patterns.json");
-            Loot = ById(loot, l => l.Id, "loot.json");
+
+            // enemies.json holds both kinds; a "type": "boss" entry was loaded as a Boss.
+            var bosses = enemies.OfType<Boss>().ToList();
+            Bosses = ByName(bosses, b => b.Name, "enemies.json");
+            Enemies = ByName(enemies.Except(bosses).ToList(), e => e.Name, "enemies.json");
+            Patterns = ByName(patterns, p => p.Name, "patterns.json");
+            ByName(upgrades, u => u.Name, "upgrades.json");
+            ByName(startingMedia, m => m.Title, "starting_media.json");
             Validate();
         }
 
@@ -33,49 +44,41 @@ namespace SevenNineWorthy.Core
         {
             return new GameData(
                 JsonFile.Read<List<ZoneTemplate>>(Path.Combine(dataDirectory, "zones.json")),
-                JsonFile.Read<List<EnemyTemplate>>(Path.Combine(dataDirectory, "enemies.json")),
-                JsonFile.Read<List<PatternTemplate>>(Path.Combine(dataDirectory, "patterns.json")),
-                JsonFile.Read<List<LootTemplate>>(Path.Combine(dataDirectory, "loot.json")),
+                JsonFile.Read<List<Enemy>>(Path.Combine(dataDirectory, "enemies.json")),
+                JsonFile.Read<List<Pattern>>(Path.Combine(dataDirectory, "patterns.json")),
+                JsonFile.Read<List<Upgrade>>(Path.Combine(dataDirectory, "upgrades.json")),
                 JsonFile.Read<List<MediaItem>>(Path.Combine(dataDirectory, "starting_media.json")));
         }
 
-        private static Dictionary<string, T> ById<T>(List<T> items, System.Func<T, string> id, string file)
+        private static Dictionary<string, T> ByName<T>(List<T> items, System.Func<T, string> name, string file)
         {
             var map = new Dictionary<string, T>();
             foreach (var item in items)
             {
-                if (map.ContainsKey(id(item)))
-                    throw new GameDataException($"Duplicate id '{id(item)}' in {file}");
-                map[id(item)] = item;
+                if (map.ContainsKey(name(item)))
+                    throw new GameDataException($"Duplicate name '{name(item)}' in {file}");
+                map[name(item)] = item;
             }
             return map;
         }
 
-        /// <summary>Cross-file checks: every id a zone references must exist and be the right kind.</summary>
+        /// <summary>Cross-file checks: every name a zone refers to must exist and be the right kind.</summary>
         private void Validate()
         {
             if (Zones.Count == 0)
                 throw new GameDataException("zones.json must define at least one zone");
 
-            foreach (var pattern in Patterns.Values)
-                if ((pattern.Kind == PatternKind.Media) != pattern.MediaType.HasValue)
-                    throw new GameDataException($"Pattern '{pattern.Id}': mediaType is required for media patterns and only for them");
-
             foreach (var zone in Zones)
             {
-                if (zone.MaterialYield.Min < 0 || zone.MaterialYield.Min > zone.MaterialYield.Max)
-                    throw new GameDataException($"Zone '{zone.Id}' has an invalid materialYield range");
+                if (zone.MinMaterials < 0 || zone.MinMaterials > zone.MaxMaterials)
+                    throw new GameDataException($"Zone '{zone.Name}' has an invalid minMaterials/maxMaterials range");
 
-                foreach (var id in zone.EnemyPool)
-                    if (!Enemies.TryGetValue(id, out var e) || e.IsBoss)
-                        throw new GameDataException($"Zone '{zone.Id}' enemyPool: '{id}' is not a non-boss enemy");
-                foreach (var id in zone.BossPool)
-                    if (!Enemies.TryGetValue(id, out var e) || !e.IsBoss)
-                        throw new GameDataException($"Zone '{zone.Id}' bossPool: '{id}' is not a boss");
-                foreach (var id in zone.LootPool.Where(id => !Loot.ContainsKey(id)))
-                    throw new GameDataException($"Zone '{zone.Id}' lootPool: unknown loot '{id}'");
-                foreach (var id in zone.PatternPool.Where(id => !Patterns.ContainsKey(id)))
-                    throw new GameDataException($"Zone '{zone.Id}' patternPool: unknown pattern '{id}'");
+                foreach (var name in zone.EnemyPool.Where(name => !Enemies.ContainsKey(name)))
+                    throw new GameDataException($"Zone '{zone.Name}' enemyPool: '{name}' is not a non-boss enemy");
+                foreach (var name in zone.BossPool.Where(name => !Bosses.ContainsKey(name)))
+                    throw new GameDataException($"Zone '{zone.Name}' bossPool: '{name}' is not a boss");
+                foreach (var name in zone.PatternPool.Where(name => !Patterns.ContainsKey(name)))
+                    throw new GameDataException($"Zone '{zone.Name}' patternPool: unknown pattern '{name}'");
             }
         }
     }

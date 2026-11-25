@@ -1,0 +1,23 @@
+[
+  {
+    "type": "orbiterUpgrade",
+    "name": "Warm Lamp",
+    "materialCost": 4,
+    "comfortBonus": 1,
+    "description": "Casts the orbiter in amber instead of clinical white. It helps more than it should."
+  },
+  {
+    "type": "orbiterUpgrade",
+    "name": "Cushioned Seat",
+    "materialCost": 6,
+    "comfortBonus": 2,
+    "description": "A real seat, printed in soft foam. You hadn't realized how long you'd been standing."
+  },
+  {
+    "type": "orbiterUpgrade",
+    "name": "Signal Booster",
+    "materialCost": 8,
+    "comfortBonus": 2,
+    "description": "Sharpens the orbiter's link to the surface. The static between you and Earth gets a little quieter."
+  }
+]

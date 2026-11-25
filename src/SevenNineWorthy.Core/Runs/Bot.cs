@@ -8,32 +8,29 @@ namespace SevenNineWorthy.Core
     {
         public int Health { get; private set; }
         public int Battery { get; private set; }
-        public int Attack { get; }
+        public List<Ability> Abilities { get; }
 
-        // Cargo not yet sent home. Lost with the bot unless transmitted or launched.
-        public int CarriedMaterials { get; set; }
-        public List<LootTemplate> CarriedLoot { get; } = new List<LootTemplate>();
-        public List<PatternTemplate> CarriedPatterns { get; } = new List<PatternTemplate>();
+        /// <summary>What the bot is carrying. Lost with the bot unless transferred to the orbiter.</summary>
+        public List<Item> Items { get; } = new List<Item>();
 
-        public Bot(int health, int battery, int attack)
+        public Bot(int health, int battery, IEnumerable<Ability> abilities)
         {
             Health = health;
             Battery = battery;
-            Attack = attack;
+            Abilities = new List<Ability>(abilities);
         }
 
-        public bool IsDestroyed => Health <= 0;
-        public bool IsOutOfBattery => Battery <= 0;
-        public bool HasPhysicalCargo => CarriedMaterials > 0 || CarriedLoot.Count > 0;
+        /// <summary>The activity diagram's "Bot operational?" check.</summary>
+        public bool IsOperational => Health > 0 && Battery > 0;
 
-        public bool CanAfford(int batteryCost) => Battery >= batteryCost;
-
-        public bool TrySpendBattery(int cost)
+        /// <summary>Spends the ability's energy cost and returns the damage dealt.</summary>
+        public int UseAbility(Ability ability)
         {
-            if (!CanAfford(cost)) return false;
-            Battery -= cost;
-            return true;
+            SpendBattery(ability.EnergyCost);
+            return ability.Power;
         }
+
+        public void SpendBattery(int amount) => Battery = Math.Max(0, Battery - amount);
 
         public void TakeDamage(int amount) => Health = Math.Max(0, Health - amount);
     }

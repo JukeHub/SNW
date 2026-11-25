@@ -1,11 +1,14 @@
 {
   "startingOrbiter": {
+    "name": "Orbiter Seven-Nine",
     "materials": 50
   },
   "startingBot": {
     "health": 20,
     "battery": 30,
-    "attack": 4
+    "abilities": [
+      { "name": "Manipulator Strike", "energyCost": 2, "power": 4 }
+    ]
   },
   "printing": {
     "botMaterialCost": 5
@@ -13,11 +16,12 @@
   "battery": {
     "movePerZone": 2,
     "salvage": 1,
-    "fightEnemy": 2,
-    "fightBoss": 4,
     "helpSurvivor": 3,
-    "transmitPattern": 1,
-    "launchPhysicalLoot": 6
+    "transfer": 4
+  },
+  "comfort": {
+    "effectTurns": 2,
+    "maxActiveEffects": 3
   },
   "boss": {
     "baseChance": 0.05,

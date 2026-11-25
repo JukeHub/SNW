@@ -1,49 +1,67 @@
 [
   {
-    "id": "flooded-suburb",
     "name": "Flooded Suburb",
     "description": "Rows of houses stand knee-deep in still, brown water. Mailboxes break the surface like grave markers. Something moves behind a curtain that hasn't been drawn in years.",
-    "materialYield": { "min": 2, "max": 6 },
-    "enemyPool": ["scav-drone", "feral-sweeper"],
-    "bossPool": ["the-archivist"],
-    "lootPool": ["childs-music-box", "knitted-blanket", "ceramic-mug"],
-    "patternPool": ["pattern-warm-lamp", "pattern-field-guide"],
+    "minMaterials": 2,
+    "maxMaterials": 6,
+    "enemyPool": [
+      "Rusted Scavenger Drone",
+      "Feral Street Sweeper"
+    ],
+    "bossPool": [
+      "The Archivist"
+    ],
+    "patternPool": [
+      "Field Guide to Birds Pattern"
+    ],
     "survivors": [
       {
         "name": "Mara",
-        "situation": "Tending a rooftop garden above the waterline. She waves your bot over and asks, mostly, whether the stars still look the same from up there."
+        "need": "Tends a rooftop garden above the waterline, and needs the rain barrels hauled up before the dry weeks. Mostly she wants to know whether the stars still look the same from up there."
       }
     ]
   },
   {
-    "id": "silent-server-farm",
     "name": "Silent Server Farm",
     "description": "A warehouse of dead machines, aisle after aisle, their lights long out. The air is dry and cold. Your footsteps are the loudest thing that has happened here in a decade.",
-    "materialYield": { "min": 3, "max": 7 },
-    "enemyPool": ["scav-drone", "signal-wraith"],
-    "bossPool": ["the-archivist"],
-    "lootPool": ["cracked-tablet", "brass-telescope"],
-    "patternPool": ["pattern-signal-booster", "pattern-ambient-album"],
+    "minMaterials": 3,
+    "maxMaterials": 7,
+    "enemyPool": [
+      "Rusted Scavenger Drone",
+      "Signal Wraith"
+    ],
+    "bossPool": [
+      "The Archivist"
+    ],
+    "patternPool": [
+      "Ambient Album Pattern"
+    ],
     "survivors": [
       {
         "name": "Theo and the kids",
-        "situation": "Living off the farm's last working generator. Theo keeps three children fed and lies to them gently about how long the power will hold."
+        "need": "Living off the farm's last working generator. It needs a patch Theo can't reach, and three children need to go on believing the power will hold."
       }
     ]
   },
   {
-    "id": "overgrown-transit-hub",
     "name": "Overgrown Transit Hub",
     "description": "A train station swallowed by green. Vines climb the departure boards; a tree has grown straight up through platform four. Birdsong, of all things. Actual birdsong.",
-    "materialYield": { "min": 2, "max": 8 },
-    "enemyPool": ["feral-sweeper", "signal-wraith"],
-    "bossPool": ["choir-of-lights"],
-    "lootPool": ["brass-telescope", "ceramic-mug", "childs-music-box"],
-    "patternPool": ["pattern-cushioned-seat", "pattern-old-film-reel"],
+    "minMaterials": 2,
+    "maxMaterials": 8,
+    "enemyPool": [
+      "Feral Street Sweeper",
+      "Signal Wraith"
+    ],
+    "bossPool": [
+      "Choir of Lights"
+    ],
+    "patternPool": [
+      "Old Film Reel Pattern"
+    ],
     "survivors": [
       {
         "name": "The Dock Radio Operator",
-        "situation": "An old woman broadcasting the same message on loop to anyone who might hear: a list of names, and where to find her. Your bot is the first thing to answer in years."
+        "need": "An old woman broadcasting a list of names on loop, and where to find her. Her antenna is down. She needs it raised, and she needs something to answer."
       }
     ]
   }

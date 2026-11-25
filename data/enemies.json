@@ -1,42 +1,39 @@
 [
   {
-    "id": "scav-drone",
+    "type": "enemy",
     "name": "Rusted Scavenger Drone",
     "health": 12,
-    "attack": 3,
-    "isBoss": false,
-    "flavor": "A pre-collapse delivery drone, still running its last route for a company that no longer exists."
+    "damage": 3,
+    "description": "A pre-collapse delivery drone, still running its last route for a company that no longer exists."
   },
   {
-    "id": "feral-sweeper",
+    "type": "enemy",
     "name": "Feral Street Sweeper",
     "health": 16,
-    "attack": 4,
-    "isBoss": false,
-    "flavor": "It cleaned these streets for forty years. Now it just circles, brushes worn to wire, cleaning nothing."
+    "damage": 4,
+    "description": "It cleaned these streets for forty years. Now it just circles, brushes worn to wire, cleaning nothing."
   },
   {
-    "id": "signal-wraith",
+    "type": "enemy",
     "name": "Signal Wraith",
     "health": 10,
-    "attack": 5,
-    "isBoss": false,
-    "flavor": "A knot of looping broadcasts given shape. It speaks in weather reports and station idents."
+    "damage": 5,
+    "description": "A knot of looping broadcasts given shape. It speaks in weather reports and station idents."
   },
   {
-    "id": "the-archivist",
+    "type": "boss",
     "name": "The Archivist",
     "health": 40,
-    "attack": 7,
-    "isBoss": true,
-    "flavor": "A server-array that refused to shut down, hoarding every file it could reach. It does not want to be read. It wants to keep."
+    "damage": 5,
+    "multiplier": 1.5,
+    "description": "A server-array that refused to shut down, hoarding every file it could reach. It does not want to be read. It wants to keep."
   },
   {
-    "id": "choir-of-lights",
+    "type": "boss",
     "name": "Choir of Lights",
     "health": 50,
-    "attack": 6,
-    "isBoss": true,
-    "flavor": "The transit hub's emergency beacons, synchronized into something that sings. Beautiful, and it does not want you to leave."
+    "damage": 4,
+    "multiplier": 1.5,
+    "description": "The transit hub's emergency beacons, synchronized into something that sings. Beautiful, and it does not want you to leave."
   }
 ]

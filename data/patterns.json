@@ -1,47 +1,38 @@
 [
   {
-    "id": "pattern-signal-booster",
-    "name": "Signal Booster",
-    "kind": "orbiterUpgrade",
-    "materialCost": 8,
-    "effect": "Sharpens the orbiter's link to the surface. The static between you and Earth gets a little quieter."
-  },
-  {
-    "id": "pattern-cushioned-seat",
-    "name": "Cushioned Seat",
-    "kind": "comfort",
-    "materialCost": 6,
-    "effect": "A real seat, printed in soft foam. You hadn't realized how long you'd been standing."
-  },
-  {
-    "id": "pattern-warm-lamp",
-    "name": "Warm Lamp",
-    "kind": "comfort",
-    "materialCost": 4,
-    "effect": "Casts the orbiter in amber instead of clinical white. It helps more than it should."
-  },
-  {
-    "id": "pattern-ambient-album",
-    "name": "Ambient Album",
-    "kind": "media",
-    "mediaType": "music",
+    "name": "Ambient Album Pattern",
+    "description": "A print file for a record somebody pressed themselves.",
     "materialCost": 3,
-    "effect": "Forty minutes of someone's late-night recordings. Rain, a distant train, a voice humming off-mic."
+    "printsInto": {
+      "type": "music",
+      "title": "Ambient Album",
+      "minutes": 40,
+      "comfortBoost": 2,
+      "description": "Forty minutes of someone's late-night recordings. Rain, a distant train, a voice humming off-mic."
+    }
   },
   {
-    "id": "pattern-field-guide",
-    "name": "Field Guide to Birds",
-    "kind": "media",
-    "mediaType": "book",
+    "name": "Field Guide to Birds Pattern",
+    "description": "A scanned book, every page, pencil notes and all.",
     "materialCost": 3,
-    "effect": "Illustrated, dog-eared, annotated in pencil. Birds you will almost certainly never see."
+    "printsInto": {
+      "type": "book",
+      "title": "Field Guide to Birds",
+      "pages": 212,
+      "comfortBoost": 2,
+      "description": "Illustrated, dog-eared, annotated in pencil. Birds you will almost certainly never see."
+    }
   },
   {
-    "id": "pattern-old-film-reel",
-    "name": "Old Film Reel",
-    "kind": "media",
-    "mediaType": "movie",
+    "name": "Old Film Reel Pattern",
+    "description": "A print file for a reel of film and the little viewer that plays it.",
     "materialCost": 5,
-    "effect": "A home movie. A birthday, maybe. People laughing at something just out of frame."
+    "printsInto": {
+      "type": "movie",
+      "title": "Old Film Reel",
+      "minutes": 12,
+      "comfortBoost": 2,
+      "description": "A home movie. A birthday, maybe. People laughing at something just out of frame."
+    }
   }
 ]

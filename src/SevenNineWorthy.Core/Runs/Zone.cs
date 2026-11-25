@@ -1,44 +1,54 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SevenNineWorthy.Core
 {
-    /// <summary>A rolled instance of a ZoneTemplate: what is actually here this visit.</summary>
+    /// <summary>The things a bot can do in a zone, apart from leaving it.</summary>
+    public enum ZoneAction { Salvage, Fight, Help }
+
+    /// <summary>One place on the surface, as the bot finds it this visit.</summary>
     public class Zone
     {
-        public ZoneTemplate Template { get; }
-        public int Index { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public double BossChance { get; }
 
-        /// <summary>Enemies and any boss. A Boss is just an Enemy subtype.</summary>
-        public List<Enemy> Hostiles { get; }
+        public List<Enemy> Enemies { get; } = new List<Enemy>();
+        public List<Survivor> Survivors { get; } = new List<Survivor>();
 
-        // Salvageable contents; each is emptied (0 / null) once picked up.
-        public int MaterialsAvailable { get; set; }
-        public LootTemplate Loot { get; set; }
-        public PatternTemplate Pattern { get; set; }
+        /// <summary>What is here to salvage.</summary>
+        public List<Item> Items { get; } = new List<Item>();
 
-        /// <summary>Null when no survivor is here.</summary>
-        public SurvivorTemplate Survivor { get; }
-        public bool SurvivorHelped { get; set; }
+        // The boss that turns up if the roll succeeds. Null when this kind of zone has none.
+        private readonly Boss _lurkingBoss;
 
-        public Zone(ZoneTemplate template, int index, List<Enemy> hostiles,
-                    int materials, LootTemplate loot, PatternTemplate pattern, SurvivorTemplate survivor)
+        public Zone(string name, string description, double bossChance, Boss lurkingBoss)
         {
-            Template = template;
-            Index = index;
-            Hostiles = hostiles;
-            MaterialsAvailable = materials;
-            Loot = loot;
-            Pattern = pattern;
-            Survivor = survivor;
+            Name = name;
+            Description = description;
+            BossChance = bossChance;
+            _lurkingBoss = lurkingBoss;
         }
 
-        public IEnumerable<Enemy> LivingHostiles => Hostiles.Where(h => !h.IsDefeated);
+        public IEnumerable<Enemy> LivingEnemies => Enemies.Where(e => !e.IsDefeated);
 
-        /// <summary>Living hostiles stop the bot from salvaging or helping here.</summary>
-        public bool IsContested => LivingHostiles.Any();
+        /// <summary>Which actions are valid here right now.</summary>
+        public List<ZoneAction> ListActions()
+        {
+            var actions = new List<ZoneAction>();
+            if (Items.Count > 0) actions.Add(ZoneAction.Salvage);
+            if (LivingEnemies.Any()) actions.Add(ZoneAction.Fight);
+            if (Survivors.Count > 0) actions.Add(ZoneAction.Help);
+            return actions;
+        }
 
-        public bool HasSalvage => MaterialsAvailable > 0 || Loot != null || Pattern != null;
-        public bool HasSurvivorToHelp => Survivor != null && !SurvivorHelped;
+        /// <summary>Rolls against BossChance. On success the boss joins the zone's enemies.</summary>
+        public bool RollForBoss(Random rng)
+        {
+            if (_lurkingBoss == null || rng.NextDouble() >= BossChance) return false;
+            Enemies.Add(_lurkingBoss);
+            return true;
+        }
     }
 }

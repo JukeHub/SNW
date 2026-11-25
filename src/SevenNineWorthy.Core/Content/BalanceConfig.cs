@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SevenNineWorthy.Core
@@ -11,13 +12,21 @@ namespace SevenNineWorthy.Core
         public StartingBotSettings StartingBot { get; set; }
         public PrintingSettings Printing { get; set; }
         public BatteryCosts Battery { get; set; }
+        public ComfortSettings Comfort { get; set; }
         public BossSettings Boss { get; set; }
 
-        public static BalanceConfig Load(string path) => JsonFile.Read<BalanceConfig>(path);
+        public static BalanceConfig Load(string path)
+        {
+            var balance = JsonFile.Read<BalanceConfig>(path);
+            if (balance.StartingBot.Abilities.Count == 0)
+                throw new GameDataException("balance.json: startingBot needs at least one ability");
+            return balance;
+        }
 
         [JsonObject(ItemRequired = Required.Always)]
         public class StartingOrbiterSettings
         {
+            public string Name { get; set; }
             public int Materials { get; set; }
         }
 
@@ -26,7 +35,7 @@ namespace SevenNineWorthy.Core
         {
             public int Health { get; set; }
             public int Battery { get; set; }
-            public int Attack { get; set; }
+            public List<Ability> Abilities { get; set; }
         }
 
         [JsonObject(ItemRequired = Required.Always)]
@@ -35,16 +44,24 @@ namespace SevenNineWorthy.Core
             public int BotMaterialCost { get; set; }
         }
 
+        /// <summary>Battery cost of each action. Fighting isn't here: an Ability carries its own energy cost.</summary>
         [JsonObject(ItemRequired = Required.Always)]
         public class BatteryCosts
         {
             public int MovePerZone { get; set; }
             public int Salvage { get; set; }
-            public int FightEnemy { get; set; }
-            public int FightBoss { get; set; }
             public int HelpSurvivor { get; set; }
-            public int TransmitPattern { get; set; }
-            public int LaunchPhysicalLoot { get; set; }
+            public int Transfer { get; set; }
+        }
+
+        [JsonObject(ItemRequired = Required.Always)]
+        public class ComfortSettings
+        {
+            /// <summary>How many run launches a consumed media item's Effect lasts.</summary>
+            public int EffectTurns { get; set; }
+
+            /// <summary>How many Effects can run at once.</summary>
+            public int MaxActiveEffects { get; set; }
         }
 
         [JsonObject(ItemRequired = Required.Always)]

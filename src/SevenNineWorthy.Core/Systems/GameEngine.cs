@@ -4,7 +4,10 @@ using System.Linq;
 
 namespace SevenNineWorthy.Core
 {
-    /// <summary>Top-level orchestrator: owns the Orbiter, runs the between-runs menu, hands runs to RunController.</summary>
+    /// <summary>
+    /// The top half of the activity diagram: load, the Orbiter menu, launch, save.
+    /// Menus and sequencing only; the Orbiter does the work.
+    /// </summary>
     public class GameEngine
     {
         private readonly IGameView _view;
@@ -12,7 +15,6 @@ namespace SevenNineWorthy.Core
         private readonly ISaveStore _saveStore;
         private readonly GameData _data;
         private readonly BalanceConfig _balance;
-        private readonly PrintService _printer;
         private readonly RunController _runController;
         private readonly int? _fixedSeed;
 
@@ -28,8 +30,7 @@ namespace SevenNineWorthy.Core
             _data = data;
             _balance = balance;
             _fixedSeed = fixedSeed;
-            _printer = new PrintService(balance);
-            _runController = new RunController(view, input, new ZoneGenerator(data, balance), balance);
+            _runController = new RunController(view, input, balance);
         }
 
         public void Play()
@@ -47,24 +48,21 @@ namespace SevenNineWorthy.Core
 
             while (true)
             {
-                _view.ShowText($"[Orbiter] Materials {_orbiter.Materials} | Survivors helped {_orbiter.SurvivorsHelped} | " +
-                               $"Patterns on file {_orbiter.KnownPatternIds.Count}\n{BuffNarrator.Describe(_orbiter)}");
+                _view.ShowText(DescribeOrbiter());
 
-                var choice = Prompt.Choose(_view, _input, "Orbiter", new[]
+                var choice = Prompt.Choose(_view, _input, _orbiter.Name, new[]
                 {
-                    new MenuOption('1', $"Start run (print a bot: {_printer.BotCost} materials)"),
+                    new MenuOption('1', $"Launch (print a bot: {_balance.Printing.BotMaterialCost} materials)"),
                     new MenuOption('2', "Browse collection"),
-                    new MenuOption('3', "Print item"),
-                    new MenuOption('4', "Upgrade orbiter"),
+                    new MenuOption('3', "Print or upgrade"),
                     new MenuOption('Q', "Save & quit"),
                 });
 
                 switch (choice)
                 {
-                    case '1': StartRun(); break;
+                    case '1': Launch(); break;
                     case '2': BrowseCollection(); break;
-                    case '3': PrintFrom("Print item", p => p.Kind != PatternKind.OrbiterUpgrade); break;
-                    case '4': UpgradeOrbiter(); break;
+                    case '3': PrintOrUpgrade(); break;
                     case 'Q':
                         _saveStore.Save(_orbiter);
                         _view.ShowText("Saved. The orbiter drifts on.");
@@ -73,16 +71,27 @@ namespace SevenNineWorthy.Core
             }
         }
 
-        private void StartRun()
+        private string DescribeOrbiter()
         {
-            if (!_printer.TryPrintBot(_orbiter, out var bot))
+            string mind = _orbiter.Effects.Count == 0
+                ? "Nothing's playing. The hum of the orbiter fills the quiet."
+                : string.Join(" ", _orbiter.Effects.Select(e => $"{e.Name} ({Plural(e.TurnsLeft, "launch", "launches")} left)."));
+
+            return $"[{_orbiter.Name}] {_orbiter.Materials.Describe()} | Comfort {_orbiter.ComfortLevel} | " +
+                   $"Contacts {_orbiter.Contacts.Count}\nState of mind: {mind}";
+        }
+
+        private void Launch()
+        {
+            int seed = _fixedSeed ?? Environment.TickCount;
+            var run = _orbiter.StartRun(_data, _balance, seed);
+            if (run == null)
             {
-                _view.ShowText($"Not enough materials to print a bot (need {_printer.BotCost}).");
+                _view.ShowText($"Not enough materials to print a bot (need {_balance.Printing.BotMaterialCost}).");
                 return;
             }
 
-            int seed = _fixedSeed ?? Environment.TickCount;
-            _runController.Play(new Run(bot, seed), _orbiter);
+            _runController.Play(run, _orbiter);
             _saveStore.Save(_orbiter);
         }
 
@@ -90,74 +99,82 @@ namespace SevenNineWorthy.Core
         {
             while (true)
             {
-                var media = _orbiter.Media;
                 char choice = Prompt.Choose(_view, _input, "Collection", new[]
                 {
-                    new MenuOption('1', $"Books ({media.OfType(MediaType.Book).Count})"),
-                    new MenuOption('2', $"Music ({media.OfType(MediaType.Music).Count})"),
-                    new MenuOption('3', $"Movies ({media.OfType(MediaType.Movie).Count})"),
-                    new MenuOption('4', $"Keepsakes ({_orbiter.KeepsakeIds.Count})"),
-                    new MenuOption('5', $"Survivors met ({_orbiter.Contacts.Count})"),
-                    new MenuOption('6', $"Places logged ({_orbiter.Locations.Count})"),
+                    new MenuOption('1', $"Books ({Stored<Book>().Count})"),
+                    new MenuOption('2', $"Music ({Stored<Music>().Count})"),
+                    new MenuOption('3', $"Movies ({Stored<Movie>().Count})"),
+                    new MenuOption('4', $"Patterns ({Stored<Pattern>().Count})"),
+                    new MenuOption('5', $"Contacts ({_orbiter.Contacts.Count})"),
                     new MenuOption('B', "Back"),
                 });
 
                 switch (choice)
                 {
-                    case '1': ConsumeMedia(MediaType.Book, "Read something"); break;
-                    case '2': ConsumeMedia(MediaType.Music, "Put something on"); break;
-                    case '3': ConsumeMedia(MediaType.Movie, "Watch something"); break;
-                    case '4': ShowList("Keepsakes", _orbiter.KeepsakeIds.Select(DescribeKeepsake)); break;
-                    case '5': ShowList("Survivors met", _orbiter.Contacts.Select(c => $"{c.Name}: {c.Situation}")); break;
-                    case '6': ShowList("Places logged", _orbiter.Locations.Select(l => $"{l.Name}: {l.Flavor}")); break;
+                    case '1': Consume(Stored<Book>(), "Read something"); break;
+                    case '2': Consume(Stored<Music>(), "Put something on"); break;
+                    case '3': Consume(Stored<Movie>(), "Watch something"); break;
+                    case '4': ShowList("Patterns", Stored<Pattern>().Select(p => p.Describe())); break;
+                    case '5': ShowList("Contacts", _orbiter.Contacts.Select(c => $"{c.Name}, last known at: {c.LastKnownZone}")); break;
                     case 'B': return;
                 }
             }
         }
 
-        private void ConsumeMedia(MediaType type, string title)
+        /// <summary>The orbiter's stored Items of one kind.</summary>
+        private List<T> Stored<T>() where T : Item => _orbiter.Items.OfType<T>().ToList();
+
+        private void Consume<T>(List<T> shelf, string title) where T : MediaItem
         {
-            var item = Prompt.ChooseFrom(_view, _input, title, _orbiter.Media.OfType(type), m => m.Title);
+            var item = Prompt.ChooseFrom(_view, _input, title, shelf, m => m.Title);
             if (item == null) return;
 
-            _orbiter.Media.Consume(item);
-            _view.ShowText($"{item.Title}\n{item.Flavor}\n{BuffNarrator.Describe(_orbiter)}");
+            var effect = _orbiter.Consume(item, _balance.Comfort.EffectTurns, _balance.Comfort.MaxActiveEffects);
+            _view.ShowText(item.Describe() + "\n" + (effect == null
+                ? "It doesn't land right now. Either it's still with you, or your head is full already."
+                : $"{effect.Name}. Comfort +{effect.ComfortBoost} for the next {Plural(effect.TurnsLeft, "launch", "launches")}."));
         }
 
-        private void UpgradeOrbiter()
+        /// <summary>One menu for both: stored patterns that haven't been printed, and upgrades that haven't been bought.</summary>
+        private void PrintOrUpgrade()
         {
-            if (_orbiter.Upgrades.Count > 0)
-                ShowList("Installed upgrades", _orbiter.Upgrades.Select(u => $"{u.Name}: {u.Effect}"));
-            PrintFrom("Upgrade orbiter", p => p.Kind == PatternKind.OrbiterUpgrade);
-        }
+            var labels = new List<string>();
+            var actions = new List<Action>();
 
-        /// <summary>Offers every known, not-yet-printed pattern that passes the filter, and prints the one chosen.</summary>
-        private void PrintFrom(string title, Func<PatternTemplate, bool> filter)
-        {
-            var printable = _orbiter.KnownPatternIds
-                .Where(_data.Patterns.ContainsKey)
-                .Select(id => _data.Patterns[id])
-                .Where(p => filter(p) && !_printer.AlreadyPrinted(_orbiter, p))
-                .ToList();
-
-            if (printable.Count == 0)
+            foreach (var pattern in Stored<Pattern>().Where(p => !_orbiter.Has(p.PrintsInto)))
             {
-                _view.ShowText("No new patterns on file for this. Bots can recover them on the surface and transmit them home.");
+                labels.Add($"Print {pattern.PrintsInto.Title} ({pattern.MaterialCost} materials)");
+                actions.Add(() => Print(pattern));
+            }
+            foreach (var upgrade in _data.Upgrades.Where(u => _orbiter.Upgrades.All(owned => owned.Name != u.Name)))
+            {
+                labels.Add($"Upgrade: {upgrade.Name} ({upgrade.MaterialCost} materials)");
+                actions.Add(() => Install(upgrade));
+            }
+
+            if (labels.Count == 0)
+            {
+                _view.ShowText("Nothing new to print or build. Bots can find patterns on the surface and transfer them home.");
                 return;
             }
 
-            var pattern = Prompt.ChooseFrom(_view, _input, $"{title} ({_orbiter.Materials} materials)", printable,
-                                            p => $"{p.Name} ({p.MaterialCost} materials)");
-            if (pattern == null) return;
-
-            _view.ShowText(_printer.TryPrint(_orbiter, pattern)
-                ? $"Printed {pattern.Name}. {pattern.Effect}"
-                : $"Not enough materials for {pattern.Name} (need {pattern.MaterialCost}).");
+            string picked = Prompt.ChooseFrom(_view, _input, $"Print or upgrade ({_orbiter.Materials.Describe()})", labels, l => l);
+            if (picked != null) actions[labels.IndexOf(picked)]();
         }
 
-        private string DescribeKeepsake(string id)
+        private void Print(Pattern pattern)
         {
-            return _data.Loot.TryGetValue(id, out var loot) ? $"{loot.Name}: {loot.Flavor}" : id;
+            var item = _orbiter.Print(pattern);
+            _view.ShowText(item == null
+                ? $"Not enough materials (need {pattern.MaterialCost})."
+                : $"Printed, and added to the collection: {item.Describe()}");
+        }
+
+        private void Install(Upgrade upgrade)
+        {
+            _view.ShowText(_orbiter.Install(upgrade)
+                ? $"Installed {upgrade.Name}. {upgrade.Description}"
+                : $"Not enough materials for {upgrade.Name} (need {upgrade.MaterialCost}).");
         }
 
         private void ShowList(string title, IEnumerable<string> lines)
@@ -165,5 +182,7 @@ namespace SevenNineWorthy.Core
             var list = lines.ToList();
             _view.ShowText($"-- {title} --\n" + (list.Count == 0 ? "(nothing yet)" : string.Join("\n", list)));
         }
+
+        private static string Plural(int count, string one, string many) => $"{count} {(count == 1 ? one : many)}";
     }
 }
