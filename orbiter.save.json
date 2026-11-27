@@ -183,6 +183,19 @@
       "Title": "Moonstruck",
       "ComfortBoost": 1,
       "Description": "Brooklyn, opera, a full moon, and a family too loud to be unhappy for long."
+    },
+    {
+      "type": "pattern",
+      "MaterialCost": 5,
+      "PrintsInto": {
+        "type": "movie",
+        "Minutes": 12,
+        "Title": "Old Film Reel",
+        "ComfortBoost": 2,
+        "Description": "A home movie. A birthday, maybe. People laughing at something just out of frame."
+      },
+      "Name": "Old Film Reel Pattern",
+      "Description": "A print file for a reel of film and the little viewer that plays it."
     }
   ],
   "Upgrades": [],

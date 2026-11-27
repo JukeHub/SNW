@@ -51,8 +51,11 @@ namespace SevenNineWorthy.Core
             public int MovePerZone { get; set; }
             public int Salvage { get; set; }
             public int HelpSurvivor { get; set; }
-            public int Transfer { get; set; }
-        }
+            /// <summary>Per item sent by signal</summary>
+            public int Transmit { get; set; }
+            ///<summary>Per item packed into the launch pod (everything physical).</summary>
+            public int LaunchPod { get; set; }
+        }   
 
         [JsonObject(ItemRequired = Required.Always)]
         public class ComfortSettings

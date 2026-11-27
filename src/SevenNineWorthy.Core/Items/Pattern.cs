@@ -13,6 +13,14 @@ namespace SevenNineWorthy.Core
 
         public Item Print() => PrintsInto.Copy();
 
+        /// <summary>
+        /// A ppatern is only data, so the bot transmits it instead of launching it.
+        /// </summary>
+        public override int TransferCost(BalanceConfig.BatteryCosts cost) => cost.Transmit;
+
+        public override string TransferRoute() => "signal";
+
+
         public override string Describe() => $"{Name} ({MaterialCost} materials to print). {Description}";
     }
 }

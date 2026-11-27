@@ -82,7 +82,7 @@ namespace SevenNineWorthy.Core
             }
 
             if (bot.Items.Count > 0)
-                Offer("Transfer loot to the orbiter", _cost.Transfer, () => Transfer(bot, orbiter));
+                Offer("Transfer loot to the orbiter", bot.TransferCost(_cost), () => Transfer(bot, orbiter));
 
             Offer("Move to a new zone", _cost.MovePerZone, () =>
             {
@@ -128,8 +128,8 @@ namespace SevenNineWorthy.Core
 
         private void Transfer(Bot bot, Orbiter orbiter)
         {
-            bot.SpendBattery(_cost.Transfer);
-            _view.ShowText("Sent up, by signal and by pod. Safe on the orbiter:\n" + DescribeAll(bot.Items));
+            bot.SpendBattery(bot.TransferCost(_cost));
+            _view.ShowText("Safe on the orbiter:\n" + string.Join("\n", bot.Items.Select(i => $"- {i.Describe()} (by {i.TransferRoute()})")));
             foreach (var item in bot.Items)
                 orbiter.Store(item);
             bot.Items.Clear();

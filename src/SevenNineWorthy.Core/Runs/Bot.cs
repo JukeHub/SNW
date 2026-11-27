@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SevenNineWorthy.Core
 {
@@ -29,6 +30,11 @@ namespace SevenNineWorthy.Core
             SpendBattery(ability.EnergyCost);
             return ability.Power;
         }
+
+        /// <summary>
+        /// Battery to send everything carried up to the orbiter. Each item says its own trip costs.
+        /// </summary>
+        public int TransferCost(BalanceConfig.BatteryCosts cost) => Items.Sum(item => item.TransferCost(cost));
 
         public void SpendBattery(int amount) => Battery = Math.Max(0, Battery - amount);
 

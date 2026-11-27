@@ -17,7 +17,8 @@
     "movePerZone": 2,
     "salvage": 1,
     "helpSurvivor": 3,
-    "transfer": 4
+    "transmit": 1,
+    "launchPod": 3
   },
   "comfort": {
     "effectTurns": 2,
